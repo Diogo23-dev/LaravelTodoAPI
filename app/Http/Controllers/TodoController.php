@@ -12,9 +12,9 @@ class TodoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Todo::all();
+        return $request->user()->todos()->get();
     }
 
     /**
@@ -24,7 +24,9 @@ class TodoController extends Controller
     {
     
 
-        $todo = Todo::create($request->validated());
+        $todo = $request->user()
+            ->todos()
+            ->create($request->validated());
 
         return response()->json($todo, 201);
     }
