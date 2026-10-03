@@ -6,9 +6,11 @@ use Illuminate\Http\Request;
 use App\Models\Todo;
 use App\Http\Requests\StoreTodoRequest;
 use App\Http\Requests\UpdateTodoRequest;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class TodoController extends Controller
 {
+    use AuthorizesRequests;
     /**
      * Display a listing of the resource.
      */
@@ -36,6 +38,7 @@ class TodoController extends Controller
      */
     public function show(Todo $todo)
     {
+        $this->authorize('view', $todo);
         return $todo;
     }
 
@@ -44,6 +47,7 @@ class TodoController extends Controller
      */
     public function update(UpdateTodoRequest $request, Todo $todo)
     {
+        $this->authorize('update', $todo);
 
         $todo->update($request->validated());
 
@@ -52,8 +56,10 @@ class TodoController extends Controller
 
     public function complete(Todo $todo)
     {
+        $this->authorize('update', $todo);
+
         $todo->completed = true;
-        $todo->update();
+        $todo->save();
 
         return $todo;
     }
@@ -63,6 +69,7 @@ class TodoController extends Controller
      */
     public function destroy(Todo $todo)
     {
+        $this->authorize('delete', $todo);
         $todo->delete();
         return response()->json(null, 204);
     }
